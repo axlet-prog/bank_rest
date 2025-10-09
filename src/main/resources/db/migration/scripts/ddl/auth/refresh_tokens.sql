@@ -4,7 +4,7 @@
 
 create sequence if not exists bank.refresh_tokens_s;
 
-create table bank.refresh_tokens
+create table if not exists bank.refresh_tokens
 (
     refresh_token_id bigint                      not null default nextval('bank.refresh_tokens_s'::regclass),
     user_id          bigint                      not null,
