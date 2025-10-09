@@ -1,4 +1,4 @@
 --liquibase formatted sql
 
 --changeset runAlways:true
-CREATE SCHEMA bank;
+create schema if not exists bank;
