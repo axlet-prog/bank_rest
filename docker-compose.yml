@@ -13,7 +13,6 @@ services:
     build:
       context: .
     container_name: rest_bank_app
-    restart: always
     depends_on:
       - postgres
     ports:
