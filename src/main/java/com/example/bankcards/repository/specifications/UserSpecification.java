@@ -5,10 +5,8 @@ import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.RoleEntity_;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.entity.UserEntity_;
-import jakarta.persistence.Table;
 import jakarta.persistence.criteria.Join;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
@@ -39,24 +37,13 @@ public class UserSpecification {
         };
     }
 
-    public static Specification<UserEntity> hasRoles(List<String> roleNames) {
+    public static Specification<UserEntity> hasRoles(List<Role> roles) {
         return (root, query, criteriaBuilder) -> {
-            if (CollectionUtils.isEmpty(roleNames)) {
+            if (CollectionUtils.isEmpty(roles)) {
                 return criteriaBuilder.conjunction();
             }
 
-            List<Role> roles;
-            try {
-                roles = roleNames.stream()
-                    .map(String::toUpperCase) // Приводим к верхнему регистру, т.к. имена enum обычно в нем
-                    .map(Role::valueOf)
-                    .collect(Collectors.toList());
-            } catch (IllegalArgumentException e) {
-                // TODO(выбросить исключение)
-                return criteriaBuilder.disjunction();
-            }
-
-            Join<UserEntity, RoleEntity> rolesJoin = root.join(RoleEntity.class.getAnnotation(Table.class).name());
+            Join<UserEntity, RoleEntity> rolesJoin = root.join(UserEntity_.roles);
 
             query.distinct(true);
             return rolesJoin.get(RoleEntity_.ROLE_NAME).in(roles);

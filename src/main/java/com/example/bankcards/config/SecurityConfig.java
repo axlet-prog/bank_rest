@@ -40,6 +40,8 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    public static final String ADMIN_PRE_AUTHORIZE = "hasAuthority('ROLE_ADMIN')";
+    public static final String USER_PRE_AUTHORIZE = "hasAuthority('ROLE_USER')";
 
     private static final String[] SWAGGER_ENDPOINTS = {
         "/swagger-ui/**",

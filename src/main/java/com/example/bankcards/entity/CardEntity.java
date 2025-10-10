@@ -26,7 +26,7 @@ import lombok.Setter;
 @Builder
 @AllArgsConstructor
 @Table(name = "cards", schema = "bank")
-public class CardEntity {
+public class CardEntity extends UpdateEntity {
 
     @Id
     @Column(name = "card_id", nullable = false)

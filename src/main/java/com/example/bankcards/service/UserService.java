@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +38,6 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public SearchResponseDto<UserResponseDto> getUsers(SearchRequest<UserSearchRequestFilters> searchRequest) {
-        Pageable pageable = PageRequest.of(searchRequest.getPage(), searchRequest.getSize());
         Specification<UserEntity> userSpecification = Specification.unrestricted();
         if (searchRequest.getFilter() != null) {
             var filter = searchRequest.getFilter();
@@ -69,16 +66,14 @@ public class UserService {
             }
         }
 
-        Page<UserEntity> usersPage = userRepository.findAll(userSpecification, pageable);
+        Page<UserEntity> usersPage = userRepository.findAll(userSpecification, searchRequest.getPageable());
 
         List<UserResponseDto> responseData = usersPage.get().map(UserMapper::toDto).toList();
 
-        return new SearchResponseDto<>(
+        return SearchResponseDto.of(
             responseData,
-            usersPage.getSize(),
-            usersPage.getNumber(),
             usersPage.getTotalElements(),
-            usersPage.getTotalElements()
+            searchRequest.getPageable()
         );
     }
 

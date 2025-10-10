@@ -1,13 +1,14 @@
-package com.example.bankcards.dto.user;
+package com.example.bankcards.dto.card;
 
 import com.example.bankcards.dto.search.SearchRequestFilter;
-import com.example.bankcards.entity.Role;
+import com.example.bankcards.entity.CardStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * <pre>
@@ -20,14 +21,15 @@ import lombok.NoArgsConstructor;
  */
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(name = "", description = "")
-public class UserSearchRequestFilters implements SearchRequestFilter {
+public class CardSearchRequestFilters implements SearchRequestFilter {
 
-    private String usernamePrefix;
+    private Long ownerId;
 
-    private List<Role> roles;
+    private List<CardStatus> cardStatuses;
 
     private LocalDateTime updateDateFrom;
 
