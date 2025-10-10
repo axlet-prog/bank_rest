@@ -17,6 +17,8 @@ import org.hibernate.annotations.CreationTimestamp;
 @Getter
 public class CreateOnlyEntity {
 
+    public static String createdFieldName = "createdDatetime";
+
     @CreationTimestamp
     @Column(name = "created_datetime", nullable = false, updatable = false)
     protected LocalDateTime createdDatetime;

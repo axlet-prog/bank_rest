@@ -13,7 +13,7 @@ import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.JwtService;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -47,11 +47,11 @@ public class AuthServiceDefault {
     // Регистрация пользователя
     @Transactional
     public JwtResponse register(RegisterRequest request) {
-        RoleEntity userRole = roleRepository.findByRoleName(Role.USER);
+        RoleEntity userRole = roleRepository.findByRoleName(Role.USER).get();
         var client = UserEntity.builder()
             .username(request.username())
             .passwordHash(passwordEncoder.encode(request.password()))
-            .roles(List.of(userRole))
+            .roles(Set.of(userRole))
             .build();
 
         userRepository.save(client);
