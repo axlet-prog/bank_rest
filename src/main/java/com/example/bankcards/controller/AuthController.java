@@ -5,6 +5,7 @@ import com.example.bankcards.dto.auth.JwtResponse;
 import com.example.bankcards.dto.auth.LoginRequest;
 import com.example.bankcards.dto.auth.RegisterRequest;
 import com.example.bankcards.service.AuthServiceDefault;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
+@SecurityRequirements()
 public class AuthController {
 
     private final AuthServiceDefault authService;

@@ -1,5 +1,5 @@
 --liquibase formatted sql
 
---changeset runAlways:true
+--changeset axlet:dropAll_1
 drop schema if exists bank cascade;
 truncate table public.databasechangelog;

@@ -51,7 +51,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
         name = "users_roles",

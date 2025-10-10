@@ -1,4 +1,4 @@
 --liquibase formatted sql
 
---changeset runAlways:true
+--changeset axlet:schemas_1
 create schema if not exists bank;

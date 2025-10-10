@@ -1,5 +1,6 @@
 package com.example.bankcards.config;
 
+import com.example.bankcards.entity.Role;
 import com.example.bankcards.security.JwtAuthenticationFilter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -43,7 +44,9 @@ public class SecurityConfig {
     private static final String[] SWAGGER_ENDPOINTS = {
         "/swagger-ui/**",
         "/swagger-ui.html",
-        "swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**"
+        "/swagger-ui/**",
+        "/v3/api-docs/**",
+        "/swagger-resources/**"
     };
 
     @Bean
@@ -59,11 +62,10 @@ public class SecurityConfig {
             }))
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/posts/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
-                //.requestMatchers("/scratch/**").authenticated()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/user/**").hasRole(Role.USER.name())
+                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated())
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
@@ -74,7 +76,8 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        // return new BCryptPasswordEncoder();
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -88,7 +91,6 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
-
 }
 
 

@@ -29,6 +29,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "roles", schema = "bank")
 public class RoleEntity extends UpdateEntity implements GrantedAuthority {
 
+    private static final String rolePrefix = "ROLE_";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
@@ -43,6 +44,6 @@ public class RoleEntity extends UpdateEntity implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return roleName.name();
+        return rolePrefix + roleName.name();
     }
 }
