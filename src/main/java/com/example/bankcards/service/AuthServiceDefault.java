@@ -8,6 +8,7 @@ import com.example.bankcards.entity.RefreshTokenEntity;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.UserEntity;
+import com.example.bankcards.exception.InternalServiceException;
 import com.example.bankcards.repository.RefreshTokenRepository;
 import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,15 +25,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * <pre>
- * <div><strong>Project name:</strong> bank_rest </div>
- * <div><strong>Creation date:</strong> 2025-10-09 </div>
- * </pre>
- *
- * @author Ivannikov Alexey
- * @since 1.0.0
- */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceDefault {
@@ -41,80 +34,78 @@ public class AuthServiceDefault {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-
     private final AuthenticationManager authenticationManager;
 
-    // Регистрация пользователя
+
     @Transactional
     public JwtResponse register(RegisterRequest request) {
-        RoleEntity userRole = roleRepository.findByRoleName(Role.USER).get();
-        var client = UserEntity.builder()
+        RoleEntity userRole = roleRepository.findByRoleName(Role.USER).orElseThrow(
+            () -> new InternalServiceException("Can't register user, because role not found")
+        );
+
+        var user = UserEntity.builder()
             .username(request.username())
             .passwordHash(passwordEncoder.encode(request.password()))
             .roles(Set.of(userRole))
             .build();
 
-        userRepository.save(client);
-
-        var jwt = jwtService.generateToken(client);
-
-        var refreshToken = generateRefreshToken(client);
-        refreshTokenRepository.save(refreshToken);
-
-        return new JwtResponse(
-            jwt,
-            refreshToken.getTokenHash()
-        );
+        userRepository.save(user);
+        RefreshTokenEntity refreshToken = generateRawRefreshToken(user);
+        return saveRefreshTokenAndGetJwtResponse(refreshToken);
     }
 
-    // Аунтификация пользователя
+    @Transactional
     public JwtResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
             request.username(),
             request.password()
         ));
 
-        // TODO(Сделать норм обработку ошибок)
-        var user = userRepository.findByUsername(request.username()).get();
-
-        var jwt = jwtService.generateToken(user);
-        var refreshToken = generateRefreshToken(user);
-
-        refreshTokenRepository.save(refreshToken);
-
-        return new JwtResponse(
-            jwt,
-            refreshToken.getTokenHash()
+        var user = userRepository.findByUsername(request.username()).orElseThrow(
+            () -> new AccessDeniedException("User with username " + request.username() + " not found")
         );
+        RefreshTokenEntity refreshToken = generateRawRefreshToken(user);
+        return saveRefreshTokenAndGetJwtResponse(refreshToken);
     }
 
-
-    // Обновление токена
+    @Transactional
     public JwtResponse refresh(JwtRefreshRequest refreshRequest) {
         String refreshToken = refreshRequest.refreshToken();
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new AccessDeniedException("Refresh token is missing");
         }
 
-        RefreshTokenEntity oldToken = refreshTokenRepository.findByTokenHash(refreshToken).orElseThrow(
+        String encodedToken = DigestUtils.sha256Hex(refreshToken);
+        RefreshTokenEntity oldToken = refreshTokenRepository.findByTokenHashAndExpiryDateAfter(
+            encodedToken,
+            LocalDateTime.now()
+        ).orElseThrow(
             () -> new AccessDeniedException("Refresh token not found")
         );
 
-        var jwt = jwtService.generateToken(oldToken.getUser());
         RefreshTokenEntity newRefreshToken = updateRefreshToken(oldToken);
-
-        return new JwtResponse(
-            jwt,
-            newRefreshToken.getTokenHash()
-        );
+        return saveRefreshTokenAndGetJwtResponse(newRefreshToken);
     }
 
-    private RefreshTokenEntity generateRefreshToken(UserEntity user) {
+    private JwtResponse saveRefreshTokenAndGetJwtResponse(RefreshTokenEntity refreshToken) {
+        var jwt = jwtService.generateToken(refreshToken.getUser());
+        JwtResponse response = new JwtResponse(
+            jwt,
+            refreshToken.getTokenHash()
+        );
+
+        refreshToken.setTokenHash(DigestUtils.sha256Hex(refreshToken.getTokenHash()));
+        refreshTokenRepository.save(refreshToken);
+
+        return response;
+    }
+
+    private RefreshTokenEntity generateRawRefreshToken(UserEntity user) {
         UUID tokenUUID = UUID.randomUUID();
         return RefreshTokenEntity.builder()
             .user(user)
             .tokenHash(tokenUUID.toString())
-            .expiryDate(LocalDateTime.now().plusSeconds(100000L * 60 * 24 * 20))
+            .expiryDate(LocalDateTime.now().plusSeconds(60 * 60 * 24 * 20))
             .build();
     }
 
@@ -125,8 +116,8 @@ public class AuthServiceDefault {
             throw new AccessDeniedException("Expired refresh token");
         }
 
-        RefreshTokenEntity newToken = generateRefreshToken(oldToken.getUser());
+        RefreshTokenEntity newToken = generateRawRefreshToken(oldToken.getUser());
         refreshTokenRepository.delete(oldToken);
-        return refreshTokenRepository.save(newToken);
+        return newToken;
     }
 }

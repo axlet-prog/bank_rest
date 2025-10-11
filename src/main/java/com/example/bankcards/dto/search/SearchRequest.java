@@ -1,5 +1,6 @@
 package com.example.bankcards.dto.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public final class SearchRequest<T extends SearchRequestFilter> {
     @Schema(description = "Фильтры")
     private T filter;
 
+    @JsonIgnore
     public Pageable getPageable() {
         return PageRequest.of(this.getPage(), this.getSize());
     }

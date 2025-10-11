@@ -37,7 +37,7 @@ public class UserService {
     private final RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public SearchResponseDto<UserResponseDto> getUsers(SearchRequest<UserSearchRequestFilters> searchRequest) {
+    public SearchResponseDto<UserResponseDto> searchUsers(SearchRequest<UserSearchRequestFilters> searchRequest) {
         Specification<UserEntity> userSpecification = Specification.unrestricted();
         if (searchRequest.getFilter() != null) {
             var filter = searchRequest.getFilter();
@@ -77,14 +77,20 @@ public class UserService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public List<UserResponseDto> getUsers() {
+
+        return userRepository.findAll().stream().map(UserMapper::toDto).toList();
+    }
+
     @Transactional
     public UserResponseDto changeUserRole(Long userId, Role newRole) {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
-            () -> new RuntimeException()
+            () -> new IllegalArgumentException("Unable to find user with id: " + userId)
         );
 
         RoleEntity newRoleEntity = roleRepository.findByRoleName(newRole).orElseThrow(
-            () -> new RuntimeException()
+            () -> new IllegalArgumentException("Unable to find role: " + newRole.name())
         );
 
         Set<RoleEntity> roles = userEntity.getRoles();
