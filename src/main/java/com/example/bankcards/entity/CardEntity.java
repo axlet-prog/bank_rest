@@ -1,6 +1,8 @@
 package com.example.bankcards.entity;
 
+import com.example.bankcards.util.converter.CardNumberConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,8 +39,9 @@ public class CardEntity extends UpdateEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @Convert(converter = CardNumberConverter.class)
     @Column(name = "card_number_encrypted", nullable = false, unique = true)
-    private String cardNumberEncrypted;
+    private String cardNumber;
 
     @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;

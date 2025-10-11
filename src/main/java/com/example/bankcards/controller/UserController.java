@@ -9,6 +9,7 @@ import com.example.bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,11 +30,17 @@ public class UserController {
     private final UserService userService;
 
     @Operation(description = "Получение списка пользователей с использованием фильтров и пагинации.")
-    @GetMapping("/")
-    public ResponseEntity<SearchResponseDto<UserResponseDto>> getUsers(
+    @PostMapping("/search")
+    public ResponseEntity<SearchResponseDto<UserResponseDto>> searchUsers(
         @RequestBody SearchRequest<UserSearchRequestFilters> request
     ) {
-        return ResponseEntity.ok(userService.getUsers(request));
+        return ResponseEntity.ok(userService.searchUsers(request));
+    }
+
+    @Operation(description = "Получение списка пользователей с использованием фильтров и пагинации.")
+    @GetMapping("")
+    public ResponseEntity<List<UserResponseDto>> getUsers() {
+        return ResponseEntity.ok(userService.getUsers());
     }
 
     @Operation(description = "Изменение роли пользователя по его ID.")

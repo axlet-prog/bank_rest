@@ -1,5 +1,6 @@
 package com.example.bankcards.security;
 
+import com.example.bankcards.config.properties.SecurityProperties;
 import com.example.bankcards.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private final JwtProperties jwtProperties;
+    private final SecurityProperties securityProperties;
 
     public Long extractUserId(String token) {
         return extractClaim(token, claims -> claims.get("id", Long.class));
@@ -43,7 +44,7 @@ public class JwtService {
         return Jwts.builder().claims(extraClaims)
             .subject(userDetails.getUsername())
             .issuedAt(new Date(System.currentTimeMillis()))
-            .expiration(new Date(System.currentTimeMillis() + jwtProperties.expiresInMillis()))
+            .expiration(new Date(System.currentTimeMillis() + securityProperties.jwt().expiresInMillis()))
             .signWith(getSigningKey()).compact();
     }
 
@@ -52,7 +53,7 @@ public class JwtService {
     }
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.singingKey());
+        byte[] keyBytes = Decoders.BASE64.decode(securityProperties.jwt().singingKey());
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

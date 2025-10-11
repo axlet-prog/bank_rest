@@ -17,3 +17,4 @@ create table if not exists bank.refresh_tokens
 );
 
 create index if not exists refresh_tokens_user_id_idx on bank.refresh_tokens (user_id);
+create index if not exists refresh_tokens_token_hash_idx on bank.refresh_tokens (token_hash);

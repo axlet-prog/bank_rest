@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 public record JwtRefreshRequest(
     @NotBlank
     @Schema(description = "Токен обновления (Refresh Token), полученный при аутентификации",
-            example = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTY3MjYxNDgwMH0.oR1d8_p3q-V8v3tq_p3-oR1d8_V8v3tq_p3-oR1d8_o")
+            example = "51aaadb8-fd23-403a-bfd5-b6adad889d2d")
     String refreshToken
 ) {
 }

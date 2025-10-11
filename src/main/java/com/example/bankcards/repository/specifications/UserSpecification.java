@@ -10,15 +10,6 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
 
-/**
- * <pre>
- * <div><strong>Project name:</strong> bank_rest </div>
- * <div><strong>Creation date:</strong> 2025-10-10 </div>
- * </pre>
- *
- * @author Ivannikov Alexey
- * @since 1.0.0
- */
 public class UserSpecification {
 
     private UserSpecification() { }

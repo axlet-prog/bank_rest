@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.math.BigDecimal;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,17 +36,23 @@ public class CardController {
 
     private final CardService cardService;
 
-    @Operation(description = "Получение списка карт с использованием фильтров и пагинации.")
-    @GetMapping("/")
-    public ResponseEntity<SearchResponseDto<CardResponseDto>> getCards(
+    @Operation(description = "Поиск карт с использованием фильтров и пагинации.")
+    @PostMapping("/search")
+    public ResponseEntity<SearchResponseDto<CardResponseDto>> searchCards(
         @RequestBody SearchRequest<CardSearchRequestFilters> request
     ) {
-        return ResponseEntity.ok(cardService.getCards(request));
+        return ResponseEntity.ok(cardService.searchCards(request));
+    }
+
+    @Operation(description = "Получение списка карт.")
+    @GetMapping("")
+    public ResponseEntity<List<CardResponseDto>> getCards() {
+        return ResponseEntity.ok(cardService.getCards());
     }
 
     @Operation(description = "Создание новой банковской карты. Требуются права администратора.")
     @PreAuthorize(ADMIN_PRE_AUTHORIZE)
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<CardResponseDto> createCard(
         @RequestBody CreateCardRequest createCardRequest
     ) {

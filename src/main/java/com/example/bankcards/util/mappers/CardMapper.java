@@ -2,6 +2,7 @@ package com.example.bankcards.util.mappers;
 
 import com.example.bankcards.dto.card.CardResponseDto;
 import com.example.bankcards.entity.CardEntity;
+import com.example.bankcards.util.CardMaskUtil;
 
 public class CardMapper {
 
@@ -10,13 +11,10 @@ public class CardMapper {
             return null;
         }
 
-        // вызов сервиса для расшифровки номера карты.
-        String cardNumber = entity.getCardNumberEncrypted();
-
         return new CardResponseDto(
             entity.getId(),
             entity.getUser().getId(),
-            cardNumber,
+            CardMaskUtil.applyMask(entity.getCardNumber()),
             entity.getExpiryDate(),
             entity.getStatus(),
             entity.getBalance().doubleValue(),

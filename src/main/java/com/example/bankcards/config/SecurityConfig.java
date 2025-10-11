@@ -66,8 +66,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
-                .requestMatchers("/user/**").hasRole(Role.USER.name())
-                .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
+                .requestMatchers("/users/**").hasRole(Role.ADMIN.name())
                 .anyRequest().authenticated())
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())
@@ -78,7 +77,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // return new BCryptPasswordEncoder();
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 

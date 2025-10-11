@@ -15,6 +15,7 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.repository.specifications.CardSpecification;
 import com.example.bankcards.security.SecurityUtil;
+import com.example.bankcards.util.converter.CardNumberConverter;
 import com.example.bankcards.util.mappers.CardMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,9 +44,10 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final CardNumberConverter cardConverter;
 
     @Transactional(readOnly = true)
-    public SearchResponseDto<CardResponseDto> getCards(SearchRequest<CardSearchRequestFilters> searchRequest) {
+    public SearchResponseDto<CardResponseDto> searchCards(SearchRequest<CardSearchRequestFilters> searchRequest) {
         UserEntity currentUser = SecurityUtil.getCurrentUser();
         Set<Role> roles = currentUser.getRoles().stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
         if (!roles.contains(Role.ADMIN)) {
@@ -75,16 +77,30 @@ public class CardService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public List<CardResponseDto> getCards() {
+        UserEntity currentUser = SecurityUtil.getCurrentUser();
+        Set<Role> roles = currentUser.getRoles().stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
+        List<CardEntity> cards;
+        if (roles.contains(Role.ADMIN)) {
+            cards = cardRepository.findAll();
+        } else {
+            cards = cardRepository.findAllByUserId(currentUser.getId());
+        }
+
+        return cards.stream().map(CardMapper::toDto).toList();
+    }
+
     @Transactional
     public CardResponseDto createCard(CreateCardRequest request) {
         UserEntity owner = userRepository.findById(request.userId()).orElseThrow(
-            () -> new RuntimeException()
+            () -> new IllegalArgumentException("Unable to find user with id: " + request.userId())
         );
 
         String cardNumber = generateCardNumber();
 
         CardEntity cardEntity = CardEntity.builder()
-            .cardNumberEncrypted(cardNumber)
+            .cardNumber(cardNumber)
             .expiryDate(LocalDate.now().plusYears(5))
             .balance(BigDecimal.valueOf(0))
             .user(owner)
@@ -99,7 +115,7 @@ public class CardService {
     @Transactional
     public CardResponseDto updateCard(Long cardId, PatchCardRequest request) {
         CardEntity cardEntity = cardRepository.findById(cardId).orElseThrow(
-            () -> new RuntimeException()
+            () -> new IllegalArgumentException("Unable to find card with id: " + cardId)
         );
 
         if (request.cardStatus() != null) {
@@ -117,13 +133,13 @@ public class CardService {
     @Transactional
     public void deleteCard(Long cardId) {
         CardEntity cardEntity = cardRepository.findById(cardId).orElseThrow(
-            () -> new RuntimeException()
+            () -> new IllegalArgumentException("Unable to find card with id: " + cardId)
         );
 
         cardRepository.deleteById(cardEntity.getId());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public BigDecimal getTotalBalance() {
         UserEntity currentUser = SecurityUtil.getCurrentUser();
         List<CardEntity> cardEntities = cardRepository.findAllByUserId(currentUser.getId());
@@ -138,12 +154,13 @@ public class CardService {
         Random rnd = new Random();
         StringBuilder sbNumber = new StringBuilder();
         sbNumber.append("2");
-        sbNumber.append(String.format("%04d", rnd.nextInt(0, 1000)));
+        sbNumber.append(String.format("%03d", rnd.nextInt(0, 1000)));
 
         for (int i = 0; i < 3; i++) {
             sbNumber.append(String.format("%04d", rnd.nextInt(0, 10000)));
         }
-        if (cardRepository.existsByCardNumberEncrypted(sbNumber.toString())) {
+        String encodedNumber = cardConverter.convertToDatabaseColumn(sbNumber.toString());
+        if (cardRepository.existsByCardNumber(encodedNumber)) {
             return generateCardNumber();
         } else {
             return sbNumber.toString();
