@@ -16,10 +16,9 @@ public class UserSpecification {
 
     public static Specification<UserEntity> usernameStartsWith(String prefix) {
         return (root, query, criteriaBuilder) -> {
-            if (prefix != null && !prefix.isBlank()) {
+            if (prefix == null || prefix.isBlank()) {
                 return criteriaBuilder.conjunction();
             } else {
-
                 return criteriaBuilder.like(
                     criteriaBuilder.lower(root.get(UserEntity_.USERNAME)),
                     prefix.toLowerCase() + "%"

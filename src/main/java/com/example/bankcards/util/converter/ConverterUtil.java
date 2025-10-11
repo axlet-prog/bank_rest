@@ -1,5 +1,6 @@
 package com.example.bankcards.util.converter;
 
+import com.example.bankcards.exception.InternalServiceException;
 import java.security.Key;
 import java.util.Base64;
 import javax.crypto.Cipher;
@@ -9,7 +10,7 @@ public class ConverterUtil {
 
     private static final String ALGORITHM = "AES";
 
-    public static Cipher initCipher(String secretKey, String algorithm, int opmode) throws Exception {
+    public static Cipher initCipher(String secretKey, String algorithm, int opmode) {
         try {
             byte[] secretKeyBytes = Base64.getDecoder().decode(secretKey);
             Key key = new SecretKeySpec(secretKeyBytes, algorithm);
@@ -17,11 +18,11 @@ public class ConverterUtil {
             cipher.init(opmode, key);
             return cipher;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new InternalServiceException("Exception during initializing Cipher");
         }
     }
 
-    public static Cipher initCipher(String secretKey, int opmode) throws Exception {
+    public static Cipher initCipher(String secretKey, int opmode) {
         return initCipher(secretKey, ALGORITHM, opmode);
     }
 }
