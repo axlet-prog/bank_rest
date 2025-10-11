@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 @Setter
 @Builder
 @AllArgsConstructor
+@Schema(description = "Общая DTO ответа на поисковый запрос")
 public final class SearchResponseDto<T> {
 
     @Schema(description = "Ответ с данными.")

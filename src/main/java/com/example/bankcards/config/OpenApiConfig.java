@@ -11,16 +11,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(title = "Bank REST API", version = "v1"),
-    // Эта настройка применяет схему "bearerAuth" ко всем эндпоинтам глобально
     security = @SecurityRequirement(name = "bearerAuth")
 )
-// Эта аннотация описывает саму схему безопасности, которую мы будем использовать
 @SecurityScheme(
-    name = "bearerAuth", // Имя схемы, которое мы будем использовать для ссылки на нее
-    type = SecuritySchemeType.HTTP, // Тип схемы - HTTP
-    bearerFormat = "JWT", // Формат токена (информационное поле)
-    scheme = "bearer" // Схема аутентификации - Bearer
-    )
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer"
+)
 public class OpenApiConfig {
 
 }

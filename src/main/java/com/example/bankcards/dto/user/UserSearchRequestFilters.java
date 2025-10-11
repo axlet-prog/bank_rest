@@ -22,19 +22,31 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(name = "", description = "")
+@Schema(name = "UserSearchFilters", description = "Фильтры для поиска пользователей")
 public class UserSearchRequestFilters implements SearchRequestFilter {
 
+    @Schema(description = "Префикс имени пользователя для поиска",
+            example = "john")
     private String usernamePrefix;
 
+    @Schema(
+        description = "Список ролей для фильтрации. Будут найдены пользователи, обладающие любой из указанных ролей.")
     private List<Role> roles;
 
+    @Schema(description = "Начало периода для фильтрации по дате последнего обновления",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime updateDateFrom;
 
+    @Schema(description = "Конец периода для фильтрации по дате последнего обновления",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime updateDateTo;
 
+    @Schema(description = "Начало периода для фильтрации по дате регистрации",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime createDateFrom;
 
+    @Schema(description = "Конец периода для фильтрации по дате регистрации",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime createDateTo;
 }
 

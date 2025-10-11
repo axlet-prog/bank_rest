@@ -1,6 +1,7 @@
 package com.example.bankcards.dto.card;
 
 import com.example.bankcards.entity.CardStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 
 /**
@@ -12,10 +13,15 @@ import java.math.BigDecimal;
  * @author Ivannikov Alexey
  * @since 1.0.0
  */
+@Schema(description = "Запрос на частичное обновление данных банковской карты (PATCH).")
 public record PatchCardRequest(
+
+    @Schema(description = "Новый статус для карты. Например, для ее блокировки.",
+            example = "ACTIVE")
     CardStatus cardStatus,
-    // For test purposes
+    // Test purposes
+    @Schema(description = "Новое значение баланса на карте.",
+            example = "25000.77")
     BigDecimal balance
 ) {
-
 }

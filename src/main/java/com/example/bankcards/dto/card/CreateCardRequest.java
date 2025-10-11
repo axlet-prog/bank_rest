@@ -1,16 +1,15 @@
 package com.example.bankcards.dto.card;
 
-/**
- * <pre>
- * <div><strong>Project name:</strong> bank_rest </div>
- * <div><strong>Creation date:</strong> 2025-10-10 </div>
- * </pre>
- *
- * @author Ivannikov Alexey
- * @since 1.0.0
- */
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+
+
+@Schema(description = "Запрос на создание новой банковской карты")
 public record CreateCardRequest(
+
+    @NotNull
+    @Schema(description = "Идентификатор пользователя, для которого создается карта",
+            example = "123")
     Long userId
 ) {
-
 }

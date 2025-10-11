@@ -10,6 +10,9 @@ import com.example.bankcards.dto.card.PatchCardRequest;
 import com.example.bankcards.dto.search.SearchRequest;
 import com.example.bankcards.dto.search.SearchResponseDto;
 import com.example.bankcards.service.CardService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,22 +26,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * <pre>
- * <div><strong>Project name:</strong> bank_rest </div>
- * <div><strong>Creation date:</strong> 2025-10-10 </div>
- * </pre>
- *
- * @author Ivannikov Alexey
- * @since 1.0.0
- */
+
 @RestController
 @RequestMapping("/cards")
 @RequiredArgsConstructor
+@Tag(name = "Управление банковскими картами", description = "Эндпоинты для создания, поиска и управления картами")
 public class CardController {
 
     private final CardService cardService;
 
+    @Operation(description = "Получение списка карт с использованием фильтров и пагинации.")
     @GetMapping("/")
     public ResponseEntity<SearchResponseDto<CardResponseDto>> getCards(
         @RequestBody SearchRequest<CardSearchRequestFilters> request
@@ -46,6 +43,7 @@ public class CardController {
         return ResponseEntity.ok(cardService.getCards(request));
     }
 
+    @Operation(description = "Создание новой банковской карты. Требуются права администратора.")
     @PreAuthorize(ADMIN_PRE_AUTHORIZE)
     @PostMapping("/")
     public ResponseEntity<CardResponseDto> createCard(
@@ -54,28 +52,33 @@ public class CardController {
         return ResponseEntity.ok(cardService.createCard(createCardRequest));
     }
 
+    @Operation(description = "Частичное обновление данных карты по ее ID. Требуются права администратора.")
     @PreAuthorize(ADMIN_PRE_AUTHORIZE)
     @PatchMapping("/{id}")
     public ResponseEntity<CardResponseDto> changeCard(
+        @Parameter(description = "Идентификатор обновляемой карты", required = true)
         @PathVariable("id") Long cardId,
         @RequestBody PatchCardRequest request
     ) {
         return ResponseEntity.ok(cardService.updateCard(cardId, request));
     }
 
+    @Operation(description = "Удаление карты по ее ID. Требуются права администратора.")
     @PreAuthorize(ADMIN_PRE_AUTHORIZE)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCard(
+        @Parameter(description = "Идентификатор удаляемой карты", required = true)
         @PathVariable("id") Long cardId
     ) {
         cardService.deleteCard(cardId);
         return ResponseEntity.ok().build();
     }
 
+    @Operation(
+        description = "Получение общего баланса по всем картам текущего пользователя. Требуются права пользователя.")
     @PreAuthorize(USER_PRE_AUTHORIZE)
     @GetMapping("/balance")
     public ResponseEntity<BigDecimal> getBalance() {
         return ResponseEntity.ok(cardService.getTotalBalance());
     }
-
 }

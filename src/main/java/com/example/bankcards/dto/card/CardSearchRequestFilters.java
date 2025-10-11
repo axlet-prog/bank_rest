@@ -10,33 +10,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * <pre>
- * <div><strong>Project name:</strong> bank_rest </div>
- * <div><strong>Creation date:</strong> 2025-10-10 </div>
- * </pre>
- *
- * @author Ivannikov Alexey
- * @since 1.0.0
- */
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(name = "", description = "")
+@Schema(name = "CardSearchFilters", description = "Фильтры для поиска банковских карт")
 public class CardSearchRequestFilters implements SearchRequestFilter {
 
+    @Schema(description = "Идентификатор владельца карты для фильтрации", example = "42")
     private Long ownerId;
 
+    @Schema(description = "Список статусов карт для фильтрации. Будут найдены карты с любым из указанных статусов.",
+            example = "[\"ACTIVE\", \"BLOCKED\"]")
     private List<CardStatus> cardStatuses;
 
+    @Schema(description = "Начало периода для фильтрации по дате последнего обновления",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime updateDateFrom;
 
+    @Schema(description = "Конец периода для фильтрации по дате последнего обновления",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime updateDateTo;
 
+    @Schema(description = "Начало периода для фильтрации по дате создания",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime createDateFrom;
 
+    @Schema(description = "Конец периода для фильтрации по дате создания",
+            example = "2025-10-10T19:08:36.907Z")
     private LocalDateTime createDateTo;
 }
-

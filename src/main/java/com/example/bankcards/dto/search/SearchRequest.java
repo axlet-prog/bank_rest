@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 @Getter
 @NoArgsConstructor
+@Schema(description = "Общая DTO поискового запроса")
 public final class SearchRequest<T extends SearchRequestFilter> {
 
     @Schema(description = "Страница. Начинается с 0.")
