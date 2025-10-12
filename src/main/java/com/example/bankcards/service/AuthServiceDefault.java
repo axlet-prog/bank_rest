@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.config.properties.SecurityProperties;
 import com.example.bankcards.dto.auth.JwtRefreshRequest;
 import com.example.bankcards.dto.auth.JwtResponse;
 import com.example.bankcards.dto.auth.LoginRequest;
@@ -30,6 +31,7 @@ public class AuthServiceDefault {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManager authenticationManager;
+    private final SecurityProperties securityProperties;
 
 
     @Transactional
@@ -97,7 +99,7 @@ public class AuthServiceDefault {
         return RefreshTokenEntity.builder()
             .user(user)
             .tokenHash(tokenUUID.toString())
-            .expiryDate(LocalDateTime.now().plusSeconds(60 * 60 * 24 * 20))
+            .expiryDate(LocalDateTime.now().plusSeconds(securityProperties.refreshToken().expiresInSeconds()))
             .build();
     }
 

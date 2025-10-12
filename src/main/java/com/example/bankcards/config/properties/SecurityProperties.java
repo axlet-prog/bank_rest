@@ -14,7 +14,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application.security")
 public record SecurityProperties(
     JwtProperties jwt,
-    DataEncoding dataEncoding
+    DataEncoding dataEncoding,
+    RefreshToken refreshToken
 ) {
 
     public record JwtProperties(
@@ -25,5 +26,9 @@ public record SecurityProperties(
     public record DataEncoding(
         String cardNumberSecretKey,
         String refreshTokenSecretKey
+    ) { }
+
+    public record RefreshToken(
+        long expiresInSeconds
     ) { }
 }
