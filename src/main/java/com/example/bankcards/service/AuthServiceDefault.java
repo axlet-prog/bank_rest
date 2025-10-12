@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceDefault {
+public class AuthServiceDefault implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -35,6 +35,7 @@ public class AuthServiceDefault {
 
 
     @Transactional
+    @Override
     public JwtResponse register(RegisterRequest request) {
 
         var user = UserEntity.builder()
@@ -49,6 +50,7 @@ public class AuthServiceDefault {
     }
 
     @Transactional
+    @Override
     public JwtResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
             request.username(),
@@ -63,6 +65,7 @@ public class AuthServiceDefault {
     }
 
     @Transactional
+    @Override
     public JwtResponse refresh(JwtRefreshRequest refreshRequest) {
         String refreshToken = refreshRequest.refreshToken();
         if (refreshToken == null || refreshToken.isBlank()) {

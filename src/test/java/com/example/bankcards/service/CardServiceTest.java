@@ -54,7 +54,7 @@ class CardServiceTest {
     private CardNumberConverter cardConverter;
 
     @InjectMocks
-    private CardService cardService;
+    private CardServiceDefault cardService;
 
     private UserEntity testUser;
     private UserEntity testAdmin;

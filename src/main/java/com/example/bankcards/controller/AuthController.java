@@ -4,7 +4,7 @@ import com.example.bankcards.dto.auth.JwtRefreshRequest;
 import com.example.bankcards.dto.auth.JwtResponse;
 import com.example.bankcards.dto.auth.LoginRequest;
 import com.example.bankcards.dto.auth.RegisterRequest;
-import com.example.bankcards.service.AuthServiceDefault;
+import com.example.bankcards.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirements()
 public class AuthController {
 
-    private final AuthServiceDefault authService;
+    private final AuthService authService;
 
     @Operation(
         description = "Позволяет пользователю войти в систему по имени пользователя и паролю. В случае успеха возвращает пару JWT токенов (access и refresh).")

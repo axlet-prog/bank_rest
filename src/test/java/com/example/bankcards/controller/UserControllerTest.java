@@ -16,7 +16,7 @@ import com.example.bankcards.dto.user.UserResponseDto;
 import com.example.bankcards.dto.user.UserSearchRequestFilters;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.security.JwtService;
-import com.example.bankcards.service.UserService;
+import com.example.bankcards.service.UserServiceDefault;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +42,7 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private UserService userService;
+    private UserServiceDefault userService;
 
     @MockitoBean
     private JwtService jwtService;

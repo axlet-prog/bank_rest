@@ -22,8 +22,8 @@ import com.example.bankcards.dto.search.SearchRequest;
 import com.example.bankcards.dto.search.SearchResponseDto;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.security.JwtService;
-import com.example.bankcards.service.CardService;
-import com.example.bankcards.service.UserService;
+import com.example.bankcards.service.CardServiceDefault;
+import com.example.bankcards.service.UserServiceDefault;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -51,7 +51,7 @@ public class CardControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private CardService cardService;
+    private CardServiceDefault cardService;
 
     @MockitoBean
     private JwtService jwtService;
@@ -60,7 +60,7 @@ public class CardControllerTest {
     private UserDetailsService userDetailsService;
 
     @MockitoBean
-    private UserService userService;
+    private UserServiceDefault userService;
 
     @Test
     @WithMockUser

@@ -13,7 +13,7 @@ import com.example.bankcards.dto.transaction.TransactionRequest;
 import com.example.bankcards.exception.ApiControllerAdvice;
 import com.example.bankcards.exception.BusinessLogicException;
 import com.example.bankcards.security.JwtService;
-import com.example.bankcards.service.TransactionService;
+import com.example.bankcards.service.TransactionServiceDefault;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ public class TransactionControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private TransactionService transactionService;
+    private TransactionServiceDefault transactionService;
 
     @MockitoBean
     private JwtService jwtService;

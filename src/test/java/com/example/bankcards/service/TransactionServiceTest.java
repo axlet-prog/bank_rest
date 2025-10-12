@@ -39,7 +39,7 @@ class TransactionServiceTest {
     private TransactionRepository transactionRepository;
 
     @InjectMocks
-    private TransactionService transactionService;
+    private TransactionServiceDefault transactionService;
 
     @Test
     void makeTransaction_Success_WhenAllConditionsAreMet() {
