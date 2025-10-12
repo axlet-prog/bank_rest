@@ -3,7 +3,6 @@ package com.example.bankcards.dto.user;
 import com.example.bankcards.entity.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Schema(description = "Ответ с информацией о пользователе")
@@ -16,7 +15,7 @@ public record UserResponseDto(
     String username,
 
     @Schema(description = "Список ролей, назначенных пользователю")
-    List<Role> roles,
+    Role role,
 
     @Schema(description = "Дата и время последнего обновления данных пользователя")
     LocalDateTime updatedDateTime,

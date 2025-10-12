@@ -15,7 +15,7 @@ public record CardResponseDto(
     @Schema(description = "Идентификатор владельца карты", example = "42")
     Long ownerId,
 
-    @Schema(description = "Номер карты (может быть маскированным)", example = "************1234")
+    @Schema(description = "Номер карты (маскированный)", example = "************1234")
     String cardNumber,
 
     @Schema(description = "Дата окончания срока действия карты", example = "2028-12-01")

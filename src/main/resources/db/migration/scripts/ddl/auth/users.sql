@@ -9,6 +9,7 @@ create table if not exists bank.users
     user_id          bigint                      not null default nextval('bank.users_s'::regclass),
     username         varchar(255)                not null,
     password_hash    varchar(255)                not null,
+    role varchar(32) not null,
 
     created_datetime timestamp without time zone not null default current_timestamp,
     updated_datetime timestamp without time zone not null default current_timestamp,

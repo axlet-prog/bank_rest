@@ -6,6 +6,7 @@ import com.example.bankcards.dto.transaction.TransactionRequest;
 import com.example.bankcards.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,9 +26,9 @@ public class TransactionController {
 
     @Operation(description = "Выполнение денежного перевода с одной карты на другую.")
     @PreAuthorize(USER_PRE_AUTHORIZE)
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<Void> makeTransaction(
-        @RequestBody TransactionRequest request
+        @Valid @RequestBody TransactionRequest request
     ) {
         transactionService.makeTransaction(request);
         return ResponseEntity.ok().build();

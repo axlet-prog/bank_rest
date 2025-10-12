@@ -13,6 +13,7 @@ import com.example.bankcards.service.CardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class CardController {
     @Operation(description = "Поиск карт с использованием фильтров и пагинации.")
     @PostMapping("/search")
     public ResponseEntity<SearchResponseDto<CardResponseDto>> searchCards(
-        @RequestBody SearchRequest<CardSearchRequestFilters> request
+        @Valid @RequestBody SearchRequest<CardSearchRequestFilters> request
     ) {
         return ResponseEntity.ok(cardService.searchCards(request));
     }
@@ -54,7 +55,7 @@ public class CardController {
     @PreAuthorize(ADMIN_PRE_AUTHORIZE)
     @PostMapping("")
     public ResponseEntity<CardResponseDto> createCard(
-        @RequestBody CreateCardRequest createCardRequest
+        @Valid @RequestBody CreateCardRequest createCardRequest
     ) {
         return ResponseEntity.ok(cardService.createCard(createCardRequest));
     }

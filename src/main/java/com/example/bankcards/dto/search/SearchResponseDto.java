@@ -27,22 +27,22 @@ public final class SearchResponseDto<T> {
     private int page;
 
     @Schema(description = "Всего результатов")
-    private long totalHits;
+    private long totalElements;
 
     @Schema(description = "Всего страниц")
     private long totalPages;
 
     public static <T> SearchResponseDto<T> of(
         final List<T> data,
-        final long totalHits,
+        final long totalElements,
         final Pageable pageable
     ) {
         SearchResponseDto<T> responseDto = new SearchResponseDto<>();
         responseDto.setPage(pageable.getPageNumber());
         responseDto.setData(data);
         responseDto.setSize(pageable.getPageSize());
-        responseDto.setTotalHits(totalHits);
-        responseDto.setTotalPages(Math.ceilDiv(totalHits, pageable.getPageSize()));
+        responseDto.setTotalElements(totalElements);
+        responseDto.setTotalPages(Math.ceilDiv(totalElements, pageable.getPageSize()));
         return responseDto;
     }
 }

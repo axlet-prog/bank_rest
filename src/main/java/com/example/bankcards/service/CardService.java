@@ -9,7 +9,6 @@ import com.example.bankcards.dto.search.SearchResponseDto;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.Role;
-import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -21,23 +20,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * <pre>
- * <div><strong>Project name:</strong> bank_rest </div>
- * <div><strong>Creation date:</strong> 2025-10-10 </div>
- * </pre>
- *
- * @author Ivannikov Alexey
- * @since 1.0.0
- */
+
 @Service
 @RequiredArgsConstructor
 public class CardService {
@@ -49,22 +38,28 @@ public class CardService {
     @Transactional(readOnly = true)
     public SearchResponseDto<CardResponseDto> searchCards(SearchRequest<CardSearchRequestFilters> searchRequest) {
         UserEntity currentUser = SecurityUtil.getCurrentUser();
-        Set<Role> roles = currentUser.getRoles().stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
-        if (!roles.contains(Role.ADMIN)) {
-            searchRequest.getFilter().setOwnerId(currentUser.getId());
-        }
 
         var filter = searchRequest.getFilter();
 
         Specification<CardEntity> cardSpecification = Specification.unrestricted();
 
-        cardSpecification = cardSpecification.and(
-            CardSpecification.hasOwnerId(searchRequest.getFilter().getOwnerId())
-        );
+        if (currentUser.getRole().equals(Role.USER)) {
+            cardSpecification = cardSpecification.and(
+                CardSpecification.hasOwnerId(currentUser.getId())
+            );
+        }
 
-        cardSpecification = cardSpecification.and(
-            CardSpecification.hasStatuses(filter.getCardStatuses())
-        );
+        if (filter != null) {
+            if (currentUser.getRole().equals(Role.ADMIN)) {
+                cardSpecification = cardSpecification.and(
+                    CardSpecification.hasOwnerId(searchRequest.getFilter().getOwnerId())
+                );
+            }
+
+            cardSpecification = cardSpecification.and(
+                CardSpecification.hasStatuses(filter.getCardStatuses())
+            );
+        }
 
         Page<CardEntity> cardsPage = cardRepository.findAll(cardSpecification, searchRequest.getPageable());
 
@@ -80,9 +75,9 @@ public class CardService {
     @Transactional(readOnly = true)
     public List<CardResponseDto> getCards() {
         UserEntity currentUser = SecurityUtil.getCurrentUser();
-        Set<Role> roles = currentUser.getRoles().stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
+
         List<CardEntity> cards;
-        if (roles.contains(Role.ADMIN)) {
+        if (currentUser.getRole().equals(Role.ADMIN)) {
             cards = cardRepository.findAll();
         } else {
             cards = cardRepository.findAllByUserId(currentUser.getId());
@@ -165,6 +160,5 @@ public class CardService {
         } else {
             return sbNumber.toString();
         }
-
     }
 }

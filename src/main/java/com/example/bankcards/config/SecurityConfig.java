@@ -40,8 +40,8 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public static final String ADMIN_PRE_AUTHORIZE = "hasAuthority('ROLE_ADMIN')";
-    public static final String USER_PRE_AUTHORIZE = "hasAuthority('ROLE_USER')";
+    public static final String ADMIN_PRE_AUTHORIZE = "hasAuthority('ADMIN')";
+    public static final String USER_PRE_AUTHORIZE = "hasAuthority('USER')";
 
     private static final String[] SWAGGER_ENDPOINTS = {
         "/swagger-ui/**",
@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
-                .requestMatchers("/users/**").hasRole(Role.ADMIN.name())
+                .requestMatchers("/users/**").hasAuthority(Role.ADMIN.name())
                 .anyRequest().authenticated())
             .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authenticationProvider())

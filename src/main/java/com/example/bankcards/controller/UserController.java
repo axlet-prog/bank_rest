@@ -9,6 +9,7 @@ import com.example.bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class UserController {
     @Operation(description = "Получение списка пользователей с использованием фильтров и пагинации.")
     @PostMapping("/search")
     public ResponseEntity<SearchResponseDto<UserResponseDto>> searchUsers(
-        @RequestBody SearchRequest<UserSearchRequestFilters> request
+        @Valid @RequestBody SearchRequest<UserSearchRequestFilters> request
     ) {
         return ResponseEntity.ok(userService.searchUsers(request));
     }
@@ -52,7 +53,7 @@ public class UserController {
         @PathVariable Long userId,
 
         @Parameter(description = "Новая роль для пользователя",
-                   required = true, example = "ROLE_ADMIN")
+                   required = true)
         @RequestParam Role newRole
     ) {
         return ResponseEntity.ok(userService.changeUserRole(userId, newRole));

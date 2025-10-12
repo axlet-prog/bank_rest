@@ -7,11 +7,11 @@ import jakarta.validation.constraints.NotNull;
 @Schema(description = "Запрос на аутентификацию пользователя")
 public record LoginRequest(
     @NotNull
-    @Schema(description = "Имя пользователя (логин)", example = "ivanov_i")
+    @Schema(description = "Имя пользователя (логин)", example = "user")
     String username,
 
     @NotNull
-    @Schema(description = "Пароль пользователя", example = "MySecurePassword123")
+    @Schema(description = "Пароль пользователя", example = "1234")
     String password
 ) {
 }

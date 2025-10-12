@@ -6,15 +6,11 @@ import com.example.bankcards.dto.auth.LoginRequest;
 import com.example.bankcards.dto.auth.RegisterRequest;
 import com.example.bankcards.entity.RefreshTokenEntity;
 import com.example.bankcards.entity.Role;
-import com.example.bankcards.entity.RoleEntity;
 import com.example.bankcards.entity.UserEntity;
-import com.example.bankcards.exception.InternalServiceException;
 import com.example.bankcards.repository.RefreshTokenRepository;
-import com.example.bankcards.repository.RoleRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.JwtService;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -32,21 +28,17 @@ public class AuthServiceDefault {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManager authenticationManager;
 
 
     @Transactional
     public JwtResponse register(RegisterRequest request) {
-        RoleEntity userRole = roleRepository.findByRoleName(Role.USER).orElseThrow(
-            () -> new InternalServiceException("Can't register user, because role not found")
-        );
 
         var user = UserEntity.builder()
             .username(request.username())
             .passwordHash(passwordEncoder.encode(request.password()))
-            .roles(Set.of(userRole))
+            .role(Role.USER)
             .build();
 
         userRepository.save(user);

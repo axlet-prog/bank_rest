@@ -1,11 +1,8 @@
 package com.example.bankcards.repository.specifications;
 
 import com.example.bankcards.entity.Role;
-import com.example.bankcards.entity.RoleEntity;
-import com.example.bankcards.entity.RoleEntity_;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.entity.UserEntity_;
-import jakarta.persistence.criteria.Join;
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.CollectionUtils;
@@ -32,11 +29,7 @@ public class UserSpecification {
             if (CollectionUtils.isEmpty(roles)) {
                 return criteriaBuilder.conjunction();
             }
-
-            Join<UserEntity, RoleEntity> rolesJoin = root.join(UserEntity_.roles);
-
-            query.distinct(true);
-            return rolesJoin.get(RoleEntity_.ROLE_NAME).in(roles);
+            return root.get(UserEntity_.ROLE).in(roles);
         };
     }
 }
