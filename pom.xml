@@ -156,10 +156,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml
-                    </apiDocsUrl> <!-- URL, по которому доступна ваша документация -->
-                    <outputDir>./docs</outputDir> <!-- Папка, в которую будет сохранен файл -->
-                    <outputFileName>openapi.yaml</outputFileName> <!-- Имя сгенерированного файла -->
+                    <apiDocsUrl>http://localhost:8080/v3/api-docs.yaml</apiDocsUrl>
+                    <outputDir>./docs</outputDir>
+                    <outputFileName>openapi.yaml</outputFileName>
                 </configuration>
             </plugin>
         </plugins>
