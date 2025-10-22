@@ -46,7 +46,7 @@ public class TransactionControllerTest {
     private UserDetailsService userDetailsService;
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void makeTransaction_AsUser_ShouldSucceed() throws Exception {
         TransactionRequest request = new TransactionRequest(1L, 2L, new BigDecimal("100.00"));
         doNothing().when(transactionService).makeTransaction(any(TransactionRequest.class));
@@ -70,7 +70,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void makeTransaction_AsAdmin_ShouldBeForbidden() throws Exception {
         TransactionRequest request = new TransactionRequest(1L, 2L, new BigDecimal("100.00"));
 
@@ -82,7 +82,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void makeTransaction_WithInvalidBody_ShouldReturnBadRequest() throws Exception {
         TransactionRequest invalidRequest = new TransactionRequest(1L, 2L, new BigDecimal("-50.00"));
         mockMvc.perform(post("/transactions")
@@ -94,7 +94,7 @@ public class TransactionControllerTest {
 
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void makeTransaction_WhenCardNotFound_ShouldReturnBadRequest() throws Exception {
         TransactionRequest request = new TransactionRequest(99L, 2L, new BigDecimal("100.00"));
         String errorMessage = "Unable to find card with id: 99";
@@ -111,7 +111,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void makeTransaction_WhenCardNotOwnedByUser_ShouldReturnBadRequest() throws Exception {
         TransactionRequest request = new TransactionRequest(1L, 2L, new BigDecimal("100.00"));
         String errorMessage = "User cards don't match";
@@ -128,7 +128,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void makeTransaction_WhenInsufficientFunds_ShouldReturnBadRequest() throws Exception {
         TransactionRequest request = new TransactionRequest(1L, 2L, new BigDecimal("10000.00"));
         String errorMessage = "There are not enough money in the balance of the card";
@@ -145,7 +145,7 @@ public class TransactionControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void makeTransaction_WhenCardIsNotActive_ShouldReturnBadRequest() throws Exception {
         TransactionRequest request = new TransactionRequest(1L, 2L, new BigDecimal("100.00"));
         String errorMessage = "Cards must be ACTIVE";

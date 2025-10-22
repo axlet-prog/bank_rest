@@ -56,7 +56,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void getUser_ReturnsUser_WhenFound() throws Exception {
         UserSearchRequestFilters filters = new UserSearchRequestFilters(
             "test",
@@ -98,7 +98,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void getUser_ReturnsException_WhenUserRole() throws Exception {
         SearchRequest<UserSearchRequestFilters> searchRequest = new SearchRequest<>(
             0,
@@ -129,7 +129,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void changeUserTestSucceed() throws Exception {
 
         when(userService.changeUserRole(1L, Role.ADMIN)).thenReturn(
@@ -147,7 +147,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void getUsersTestSucceed() throws Exception {
 
         when(userService.getUsers()).thenReturn(

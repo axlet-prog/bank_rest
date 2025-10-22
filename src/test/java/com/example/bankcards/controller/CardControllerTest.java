@@ -91,7 +91,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void getCards_AsAdmin_ShouldReturnAllCards() throws Exception {
         List<CardResponseDto> cards = List.of(
             new CardResponseDto(
@@ -116,7 +116,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void createCard_AsAdmin_ShouldCreateCard() throws Exception {
         CreateCardRequest createRequest = new CreateCardRequest(1L);
         CardResponseDto createdCard = new CardResponseDto(
@@ -138,7 +138,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void createCard_AsUser_ShouldBeForbidden() throws Exception {
         CreateCardRequest createRequest = new CreateCardRequest(1L);
 
@@ -151,7 +151,7 @@ public class CardControllerTest {
 
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void changeCard_AsAdmin_ShouldUpdateCard() throws Exception {
         PatchCardRequest patchRequest = new PatchCardRequest(CardStatus.BLOCKED, new BigDecimal("500.25"));
         CardResponseDto updatedCard = new CardResponseDto(
@@ -173,7 +173,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void changeCard_AsUser_ShouldBeForbidden() throws Exception {
         PatchCardRequest patchRequest = new PatchCardRequest(CardStatus.BLOCKED, null);
 
@@ -185,7 +185,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void deleteCard_AsAdmin_ShouldDeleteCard() throws Exception {
         doNothing().when(cardService).deleteCard(1L);
 
@@ -195,7 +195,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void deleteCard_AsUser_ShouldBeForbidden() throws Exception {
         mockMvc.perform(delete("/cards/{id}", 1L)
                             .with(csrf()))
@@ -203,7 +203,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "USER" })
+    @WithMockUser(authorities = { "USER" })
     void getBalance_AsUser_ShouldReturnTotalBalance() throws Exception {
         BigDecimal totalBalance = new BigDecimal("12345.67");
         when(cardService.getTotalBalance()).thenReturn(totalBalance);
@@ -216,7 +216,7 @@ public class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = { "ADMIN" })
+    @WithMockUser(authorities = { "ADMIN" })
     void getBalance_AsAdmin_ShouldBeForbidden() throws Exception {
         mockMvc.perform(get("/cards/balance")
                             .with(csrf()))
