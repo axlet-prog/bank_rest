@@ -17,8 +17,8 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - '8080:8080'
-      - '8081:8081'
+      - '8180:8080'
+      - '8181:8081'
     environment:
       - 'DB_HOST=postgres'
       - 'DB_PORT=5432'
@@ -33,7 +33,7 @@ services:
       POSTGRES_USER: "user"
       POSTGRES_DB: "bank_db"
     ports:
-      - '5432:5432'
+      - '5434:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: always
