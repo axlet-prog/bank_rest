@@ -1,6 +1,6 @@
 <h1>🚀 Разработка Системы Управления Банковскими Картами</h1>
   
-<h2>📝 Описание задачи</h2>
+<h2>📝 Описание</h2>
   <p>backend-приложение на Java (Spring Boot) для управления банковскими картами:</p>
   <ul>
     <li>Создание и управление картами</li>
@@ -65,7 +65,6 @@
 <h3>✅ Документация</h3>
   <ul>
     <li>Swagger UI / OpenAPI — <code>docs/openapi.yaml</code></li>
-    <li><code>README.md</code> с инструкцией запуска</li>
   </ul>
 
 <h3>✅ Развёртывание и тестирование</h3>
@@ -85,6 +84,6 @@ docker compose down
 
 <h2>💡 Технологии</h2>
   <p>
-    Java 25, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
+    Java 25, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
   </p>
 
