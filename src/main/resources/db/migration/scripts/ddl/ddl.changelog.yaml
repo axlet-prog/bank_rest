@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - include:
+      file: auth/users.sql
+      relativeToChangelogFile: true
+  - include:
+      file: auth/refresh_tokens.sql
+      relativeToChangelogFile: true
+  - include:
+      file: cards.sql
+      relativeToChangelogFile: true
+  - include:
+      file: transactions.sql
+      relativeToChangelogFile: true

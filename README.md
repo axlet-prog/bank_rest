@@ -74,18 +74,17 @@
     <li>Liquibase миграции</li>
     <li>Юнит-тесты ключевой бизнес-логики</li>
   </ul>
-
-<h2>📊 Оценка</h2>
-  <ul>
-    <li>Соответствие требованиям</li>
-    <li>Чистота архитектуры и кода</li>
-    <li>Безопасность</li>
-    <li>Обработка ошибок</li>
-    <li>Покрытие тестами</li>
-    <li>ООП и уровни абстракции</li>
-  </ul>
+  
+Для запуска требуется Docker engine и Docker compose, а в качестве сборщика - Maven. После загрузки проекта в директории
+с файлом docker-compose.yaml небходимо выполнить команду:
+docker compose up --build
+Контейнер приложения использует порт 8080, а бд - 5432
+Для остановки контейнеров используется команда:
+docker compose down
+Для удаления тома с данные PostgreSQL добавить флаг -v
 
 <h2>💡 Технологии</h2>
   <p>
-    Java 17+, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
+    Java 25, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
   </p>
+

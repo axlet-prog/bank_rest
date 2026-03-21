@@ -1,1 +1,611 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.1.0
+info:
+  title: Bank REST API
+  version: v1
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+security:
+  - bearerAuth: [ ]
+tags:
+  - name: Проведение транзакций
+    description: Эндпоинт для выполнения денежных переводов
+  - name: Управление пользователями
+    description: Эндпоинты для поиска пользователей и управления их ролями
+  - name: Аутентификация и Авторизация
+    description: "Эндпоинты для входа, регистрации и обновления токенов"
+  - name: Управление банковскими картами
+    description: "Эндпоинты для создания, поиска и управления картами"
+paths:
+  /users/{userId}/change_role:
+    post:
+      tags:
+        - Управление пользователями
+      description: Изменение роли пользователя по его ID.
+      operationId: changeUserRole
+      parameters:
+        - name: userId
+          in: path
+          description: "Идентификатор пользователя, чья роль изменяется"
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: newRole
+          in: query
+          description: Новая роль для пользователя
+          required: true
+          schema:
+            type: string
+            enum:
+              - ADMIN
+              - USER
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponseDto"
+  /users/search:
+    post:
+      tags:
+        - Управление пользователями
+      description: Получение списка пользователей с использованием фильтров и пагинации.
+      operationId: searchUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequestUserSearchFilters"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SearchResponseDtoUserResponseDto"
+  /transactions:
+    post:
+      tags:
+        - Проведение транзакций
+      description: Выполнение денежного перевода с одной карты на другую.
+      operationId: makeTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /cards:
+    get:
+      tags:
+        - Управление банковскими картами
+      description: Получение списка карт.
+      operationId: getCards
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CardResponseDto"
+    post:
+      tags:
+        - Управление банковскими картами
+      description: Создание новой банковской карты. Требуются права администратора.
+      operationId: createCard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCardRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardResponseDto"
+  /cards/search:
+    post:
+      tags:
+        - Управление банковскими картами
+      description: Поиск карт с использованием фильтров и пагинации.
+      operationId: searchCards
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequestCardSearchFilters"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/SearchResponseDtoCardResponseDto"
+  /auth/register:
+    post:
+      tags:
+        - Аутентификация и Авторизация
+      description: "Создает нового пользователя в системе, возвращая пару JWT токе\
+        нов."
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtResponse"
+      security: [ ]
+  /auth/refresh:
+    post:
+      tags:
+        - Аутентификация и Авторизация
+      description: Позволяет получить новую пару JWT токенов (access и refresh) при
+        предоставлении действительного refresh токена.
+      operationId: refresh
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JwtRefreshRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtResponse"
+      security: [ ]
+  /auth/login:
+    post:
+      tags:
+        - Аутентификация и Авторизация
+      description: Позволяет пользователю войти в систему по имени пользователя и
+        паролю. В случае успеха возвращает пару JWT токенов (access и refresh).
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JwtResponse"
+      security: [ ]
+  /cards/{id}:
+    delete:
+      tags:
+        - Управление банковскими картами
+      description: Удаление карты по ее ID. Требуются права администратора.
+      operationId: deleteCard
+      parameters:
+        - name: id
+          in: path
+          description: Идентификатор удаляемой карты
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: OK
+    patch:
+      tags:
+        - Управление банковскими картами
+      description: Частичное обновление данных карты по ее ID. Требуются права администратора.
+      operationId: changeCard
+      parameters:
+        - name: id
+          in: path
+          description: Идентификатор обновляемой карты
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchCardRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardResponseDto"
+  /users:
+    get:
+      tags:
+        - Управление пользователями
+      description: Получение списка пользователей с использованием фильтров и пагинации.
+      operationId: getUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponseDto"
+  /cards/balance:
+    get:
+      tags:
+        - Управление банковскими картами
+      description: Получение общего баланса по всем картам текущего пользователя.
+        Требуются права пользователя.
+      operationId: getBalance
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+components:
+  schemas:
+    UserResponseDto:
+      type: object
+      description: Ответ с информацией о пользователе
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор пользователя
+          example: 1
+        username:
+          type: string
+          description: Имя пользователя (логин)
+          example: john_doe
+        role:
+          type: string
+          description: "Список ролей, назначенных пользователю"
+          enum:
+            - ADMIN
+            - USER
+        updatedDateTime:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления данных пользователя
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Дата и время регистрации пользователя
+    SearchRequestUserSearchFilters:
+      type: object
+      description: Общая DTO поискового запроса
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Страница. Начинается с 0.
+        size:
+          type: integer
+          format: int32
+          description: Размер страницы
+        filter:
+          $ref: "#/components/schemas/UserSearchFilters"
+          description: Фильтры
+    UserSearchFilters:
+      type: object
+      description: Фильтры для поиска пользователей
+      properties:
+        usernamePrefix:
+          type: string
+          description: Префикс имени пользователя для поиска
+          example: john
+        roles:
+          type: array
+          description: "Список ролей для фильтрации. Будут найдены пользователи, о\
+            бладающие любой из указанных ролей."
+          items:
+            type: string
+            enum:
+              - ADMIN
+              - USER
+        updateDateFrom:
+          type: string
+          format: date-time
+          description: Начало периода для фильтрации по дате последнего обновления
+          example: 2025-10-10T19:08:36.907Z
+        updateDateTo:
+          type: string
+          format: date-time
+          description: Конец периода для фильтрации по дате последнего обновления
+          example: 2025-10-10T19:08:36.907Z
+        createDateFrom:
+          type: string
+          format: date-time
+          description: Начало периода для фильтрации по дате регистрации
+          example: 2025-10-10T19:08:36.907Z
+        createDateTo:
+          type: string
+          format: date-time
+          description: Конец периода для фильтрации по дате регистрации
+          example: 2025-10-10T19:08:36.907Z
+    SearchResponseDtoUserResponseDto:
+      type: object
+      description: Общая DTO ответа на поисковый запрос
+      properties:
+        data:
+          type: array
+          description: Ответ с данными.
+          items:
+            $ref: "#/components/schemas/UserResponseDto"
+        size:
+          type: integer
+          format: int32
+          description: Размер страницы
+        page:
+          type: integer
+          format: int32
+          description: Страница
+        totalElements:
+          type: integer
+          format: int64
+          description: Всего результатов
+        totalPages:
+          type: integer
+          format: int64
+          description: Всего страниц
+    TransactionRequest:
+      type: object
+      description: Запрос на проведение денежного перевода между картами
+      properties:
+        cardIdFrom:
+          type: integer
+          format: int64
+          description: "Идентификатор карты, с которой списываются средства (карта\
+            \ отправителя)"
+          example: 101
+        cardIdTo:
+          type: integer
+          format: int64
+          description: "Идентификатор карты, на которую зачисляются средства (карт\
+            а получателя)"
+          example: 102
+        amount:
+          type: number
+          description: Сумма перевода. Должна быть положительным числом.
+          example: 1500.5
+      required:
+        - amount
+        - cardIdFrom
+        - cardIdTo
+    CreateCardRequest:
+      type: object
+      description: Запрос на создание новой банковской карты
+      properties:
+        userId:
+          type: integer
+          format: int64
+          description: "Идентификатор пользователя, для которого создается карта"
+          example: 123
+      required:
+        - userId
+    CardResponseDto:
+      type: object
+      description: Ответ с полной информацией о банковской карте
+      properties:
+        cardId:
+          type: integer
+          format: int64
+          description: Уникальный идентификатор карты
+          example: 101
+        ownerId:
+          type: integer
+          format: int64
+          description: Идентификатор владельца карты
+          example: 42
+        cardNumber:
+          type: string
+          description: Номер карты (маскированный)
+          example: '************1234'
+        expirationDate:
+          type: string
+          format: date
+          description: Дата окончания срока действия карты
+          example: 2028-12-01
+        cardStatus:
+          type: string
+          description: Текущий статус карты
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - BLOCKED
+          example: ACTIVE
+        balance:
+          type: number
+          format: double
+          description: Текущий баланс на карте
+          example: 15500.75
+        updatedDateTime:
+          type: string
+          format: date-time
+          description: Дата и время последнего обновления данных карты
+        createdDateTime:
+          type: string
+          format: date-time
+          description: Дата и время создания карты
+    CardSearchFilters:
+      type: object
+      description: Фильтры для поиска банковских карт
+      properties:
+        ownerId:
+          type: integer
+          format: int64
+          description: Идентификатор владельца карты для фильтрации
+          example: 42
+        cardStatuses:
+          type: array
+          description: Список статусов карт для фильтрации. Будут найдены карты с
+            любым из указанных статусов.
+          example:
+            - ACTIVE
+            - BLOCKED
+          items:
+            type: string
+            enum:
+              - ACTIVE
+              - EXPIRED
+              - BLOCKED
+        updateDateFrom:
+          type: string
+          format: date-time
+          description: Начало периода для фильтрации по дате последнего обновления
+          example: 2025-10-10T19:08:36.907Z
+        updateDateTo:
+          type: string
+          format: date-time
+          description: Конец периода для фильтрации по дате последнего обновления
+          example: 2025-10-10T19:08:36.907Z
+        createDateFrom:
+          type: string
+          format: date-time
+          description: Начало периода для фильтрации по дате создания
+          example: 2025-10-10T19:08:36.907Z
+        createDateTo:
+          type: string
+          format: date-time
+          description: Конец периода для фильтрации по дате создания
+          example: 2025-10-10T19:08:36.907Z
+    SearchRequestCardSearchFilters:
+      type: object
+      description: Общая DTO поискового запроса
+      properties:
+        page:
+          type: integer
+          format: int32
+          description: Страница. Начинается с 0.
+        size:
+          type: integer
+          format: int32
+          description: Размер страницы
+        filter:
+          $ref: "#/components/schemas/CardSearchFilters"
+          description: Фильтры
+    SearchResponseDtoCardResponseDto:
+      type: object
+      description: Общая DTO ответа на поисковый запрос
+      properties:
+        data:
+          type: array
+          description: Ответ с данными.
+          items:
+            $ref: "#/components/schemas/CardResponseDto"
+        size:
+          type: integer
+          format: int32
+          description: Размер страницы
+        page:
+          type: integer
+          format: int32
+          description: Страница
+        totalElements:
+          type: integer
+          format: int64
+          description: Всего результатов
+        totalPages:
+          type: integer
+          format: int64
+          description: Всего страниц
+    RegisterRequest:
+      type: object
+      description: Запрос на регистрацию нового пользователя
+      properties:
+        username:
+          type: string
+          description: Имя пользователя (логин) для нового аккаунта
+          example: user
+        password:
+          type: string
+          description: Пароль для нового аккаунта
+          example: 1234
+      required:
+        - password
+        - username
+    JwtResponse:
+      type: object
+      description: Ответ с токенами доступа и обновления
+      properties:
+        accessToken:
+          type: string
+          description: Токен доступа (Access Token)
+          example: eyJhbGciOiJIUzUxMiJ9.eyJpZCI6Miwic3ViIjoidXNlciIsImlhdCI6MTc2MDExMzI4MCwiZXhwIjoxNzYwMTE0MDAwfQ.kQUNQA3m7Rjo_6SWdK4iy1N9nuRo0ocvZa2xcP4ov7NoedPHMqndYtrTBmjYKmTxCzsABSoZjPKnbywhQmjUcg
+        refreshToken:
+          type: string
+          description: Токен обновления (Refresh Token)
+          example: a62cc616-b632-4b28-bff2-5eda3aa2460c
+    JwtRefreshRequest:
+      type: object
+      description: Запрос на обновление пары токенов
+      properties:
+        refreshToken:
+          type: string
+          description: "Токен обновления (Refresh Token), полученный при аутентифи\
+            кации"
+          example: 51aaadb8-fd23-403a-bfd5-b6adad889d2d
+      required:
+        - refreshToken
+    LoginRequest:
+      type: object
+      description: Запрос на аутентификацию пользователя
+      properties:
+        username:
+          type: string
+          description: Имя пользователя (логин)
+          example: user
+        password:
+          type: string
+          description: Пароль пользователя
+          example: 1234
+      required:
+        - password
+        - username
+    PatchCardRequest:
+      type: object
+      description: Запрос на частичное обновление данных банковской карты (PATCH).
+      properties:
+        cardStatus:
+          type: string
+          description: "Новый статус для карты. Например, для ее блокировки."
+          enum:
+            - ACTIVE
+            - EXPIRED
+            - BLOCKED
+          example: ACTIVE
+        balance:
+          type: number
+          description: Новое значение баланса на карте.
+          example: 25000.77
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
